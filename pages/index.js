@@ -1,35 +1,35 @@
 import React from "react";
+import { MongoClient } from "mongodb";
 
 import MeetupList from "../components/meetups/MeetupList";
-
-const DUMMY_MEETUPS = [
-  {
-    id: "m1",
-    title: "A first meetup",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a0/OfferUp_Community_MeetUp_Spot_Sign.png",
-    address: "123 Sydney Australia ",
-    description: "This is the first meetup",
-  },
-  {
-    id: "m2",
-    title: "A Second meetup",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a0/OfferUp_Community_MeetUp_Spot_Sign.png",
-    address: "123 Sydney Australia ",
-    description: "This is the second meetup",
-  },
-];
 
 const HomePage = (props) => {
   return <MeetupList meetups={props.meetups} />;
 };
 
 export async function getStaticProps() {
+  const client = await MongoClient.connect(
+    "mongodb+srv://ronaldthomas094db:irzAh9W5WriXKXN1@ronaldmongocluster.0ronf.mongodb.net/meetups?retryWrites=true&w=majority&appName=ronaldmongocluster"
+  );
+
+  const db = client.db();
+
+  const meetupsCollections = db.collection("meetups");
   // FETCH DATA FROM API
+
+  const meetups = await meetupsCollections.find().toArray();
+
+  client.close();
+
   return {
     props: {
-      meetups: DUMMY_MEETUPS,
+      meetups: meetups.map((meetup) => ({
+        title: meetup.title,
+        address: meetup.address,
+        image: meetup.image,
+        description: meetup.description,
+        id: meetup._id.toString(),
+      })),
     },
     // revalidate: 10,
   };
