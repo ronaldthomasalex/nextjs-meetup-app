@@ -1,2 +1,3 @@
-Tech 
-Next.js , MongoDb Atlas
+## Tech 
+ - Next.js
+ - MongoDb Atlas
